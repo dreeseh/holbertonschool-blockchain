@@ -46,8 +46,9 @@ typedef struct sig_s
 /* prototypes */
 uint8_t *sha256(int8_t const *s, size_t len,
 		uint8_t digest[SHA256_DIGEST_LENGTH]);
-
 EC_KEY *ec_create(void);
 uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN]);
+EC_KEY *ec_from_pub(uint8_t const pub[EC_PUB_LEN]);
+void free_them_all(EC_KEY *key, EC_GROUP *group, EC_POINT *point, BIGNUM *bn_pub_x, BIGNUM *bn_pub_y);
 
 #endif /* _HBLK_CRYPTO_H */
