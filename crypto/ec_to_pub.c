@@ -21,15 +21,9 @@ uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN])
 	}
 	/* retrieves the public key point from key struct */
 	point = EC_KEY_get0_public_key(key);
+
 	/* retrieves the EC group fron key struct */
 	group = EC_KEY_get0_group(key);
-	/**
-	 * The EC_POINT_point2oct function is used to convert the public
-	 * key point into an uncompressed octet string.
-	 * The resulting octet string is stored in the pub buffer
-	 */
-	len = EC_POINT_point2oct(group, point, POINT_CONVERSION_UNCOMPRESSED,
-				 pub, EC_PUB_LEN, NULL);
 
 	/* checks if point or group is null */
 	if (point == NULL || group == NULL)
@@ -37,6 +31,13 @@ uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN])
 		fprintf(stderr, "ec_to_pub() failed\n");
 		return (NULL);
 	}
+	/**
+	 * The EC_POINT_point2oct function is used to convert the public
+	 * key point into an uncompressed octet string.
+	 * The resulting octet string is stored in the pub buffer
+	 */
+	len = EC_POINT_point2oct(group, point, POINT_CONVERSION_UNCOMPRESSED,
+				 pub, EC_PUB_LEN, NULL);
 
 	/**
 	 * checks if the length of the octet string matches
@@ -47,7 +48,6 @@ uint8_t *ec_to_pub(EC_KEY const *key, uint8_t pub[EC_PUB_LEN])
 		fprintf(stderr, "ec_to_pub() failed\n");
 		return (NULL);
 	}
-
 	/* returning a pointer to the address of the extracted key */
 	return (pub);
 }
