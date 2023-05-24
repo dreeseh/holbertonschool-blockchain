@@ -2,66 +2,44 @@
 
 EC_KEY *ec_from_pub(uint8_t const pub[EC_PUB_LEN])
 {
-	EC_KEY *key = EC_KEY_new();
-	EC_GROUP *group = EC_GROUP_new_by_curve_name(EC_CURVE);
-	EC_POINT *point = EC_POINT_new(group);
-	BIGNUM *bn_pub_x = BN_bin2bn(pub + 1, EC_PUB_LEN / 2, NULL);
-	BIGNUM *bn_pub_y = BN_bin2bn(pub + EC_PUB_LEN / 2 + 1, EC_PUB_LEN / 2, NULL);
+	EC_KEY *key;
+	EC_POINT *point;
+	const EC_GROUP *group;
 
-	if (pub[EC_PUB_LEN != 65])
-	{
-		printf("ec_from_pub() failed\n");
-		return (NULL);
-	}
-	if (key == NULL)
+	/* generates a new key based upon the given curve */
+	key = EC_KEY_new_by_curve_name(EC_CURVE);
+	if (!key || !pub)
 		return (NULL);
 
-	if (group == NULL || point == NULL)
+	/* set group struct */
+	group = EC_KEY_get0_group(key);
+
+	/* Set the public key */
+	point = EC_POINT_new(group);
+	if (!point)
 	{
-		free_them_all(key, group, NULL, NULL, NULL);
+		/* Failed to create EC_POINT structure */
+		EC_KEY_free(key);
 		return (NULL);
 	}
-	if (bn_pub_x == NULL || bn_pub_y == NULL)
+
+	/* ec_point_oct2point converts the pub key */
+	/* octect string to a usable EC_POINT */
+	if (!EC_POINT_oct2point(group, point, pub, EC_PUB_LEN, NULL))
 	{
-		free_them_all(key, group, point, bn_pub_x, bn_pub_y);
+		/* Failed to set the public key */
+		EC_KEY_free(key);
+		EC_POINT_free(point);
 		return (NULL);
 	}
-	if (!EC_POINT_set_affine_coordinates_GFp(group, point, bn_pub_x,
-						bn_pub_y, NULL))
-	{
-		free_them_all(key, group, point, bn_pub_x, bn_pub_y);
-		return (NULL);
-	}
-	if (!EC_KEY_set_group(key, group))
-	{
-		free_them_all(key, group, point, bn_pub_x, bn_pub_y);
-		return (NULL);
-	}
+
 	if (!EC_KEY_set_public_key(key, point))
 	{
-		free_them_all(key, group, point, bn_pub_x, bn_pub_y);
+		/* Failed to set the public key in EC_KEY structure */
+		EC_KEY_free(key);
+		EC_POINT_free(point);
 		return (NULL);
 	}
-
-	free_them_all(NULL, group, point, bn_pub_x, bn_pub_y);
+	EC_POINT_free(point);
 	return (key);
-}
-
-void free_them_all(EC_KEY *key, EC_GROUP *group, EC_POINT *point,
-			BIGNUM *bn_pub_x, BIGNUM *bn_pub_y)
-{
-	if (key != NULL)
-		EC_KEY_free(key);
-
-	if (group != NULL)
-		EC_GROUP_free(group);
-
-	if (point != NULL)
-		EC_POINT_free(point);
-
-	if (bn_pub_x != NULL)
-		BN_free(bn_pub_x);
-
-	if (bn_pub_y != NULL)
-		BN_free(bn_pub_y);
 }
