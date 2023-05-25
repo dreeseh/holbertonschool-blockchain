@@ -37,14 +37,6 @@ EC_KEY *ec_load(char const *folder)
 	}
 	fclose(file);
 
-	/* set public key 
-	if (EC_KEY_set_public_key(private_key, EC_KEY_get0_public_key(public_key)) == 0)
-	{
-		EC_KEY_free(private_key);
-		EC_KEY_free(public_key);
-		return (NULL);
-	}
-	*/
 	EC_KEY_free(public_key);
 	return (private_key);
 }
