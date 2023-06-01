@@ -10,7 +10,7 @@
  */
 int ec_save(EC_KEY *key, char const *folder)
 {
-	char path[256];
+	char path[PATH_MAX];
 	FILE *file;
 	struct stat status;
 
