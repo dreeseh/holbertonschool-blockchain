@@ -31,7 +31,7 @@ blockchain_t *blockchain_create(void)
 
 	memcpy(&(new_block->data.buffer), GENESIS_DATA, GENESIS_DATA_LEN);
 	new_block->data.len = GENESIS_DATA_LEN;
-	
+
 	memcpy(&(new_block->hash), GENESIS_HASH, SHA256_DIGEST_LENGTH);
 
 	llist_add_node(new_blockchain->chain, new_block, ADD_NODE_FRONT);
