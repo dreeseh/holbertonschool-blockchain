@@ -7,8 +7,8 @@
  */
 blockchain_t *blockchain_create(void)
 {
-	blockchain_t *new_blockchain;
-	block_t *new_block;
+	blockchain_t *new_blockchain = NULL;
+	block_t *new_block = NULL;
 
 	new_blockchain = malloc(sizeof(blockchain_t));
 	if (!new_blockchain)
