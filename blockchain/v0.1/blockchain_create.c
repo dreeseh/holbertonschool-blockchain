@@ -11,24 +11,11 @@ blockchain_t *blockchain_create(void)
 	block_t *new_block = NULL;
 
 	new_blockchain = malloc(sizeof(blockchain_t));
-	if (!new_blockchain)
+	new_block = calloc(1, sizeof(block_t));
+	if (!new_blockchain || !new_block)
 		return (NULL);
 
-	new_block = malloc(sizeof(block_t));
-	if (!new_block)
-	{
-		free(new_blockchain);
-		return (NULL);
-	}
-
-	new_blockchain->chain = llist_create(MT_SUPPORT_TRUE);
-	if (!new_blockchain->chain)
-	{
-		free(new_blockchain->chain);
-		free(new_blockchain);
-		free(new_block);
-		return (NULL);
-	}
+	new_blockchain->chain = llist_create(MT_SUPPORT_FALSE);
 
 	new_block->info.index = 0;
 	new_block->info.difficulty = 0;
@@ -41,13 +28,7 @@ blockchain_t *blockchain_create(void)
 
 	memcpy(new_block->hash, GENESIS_HASH, SHA256_DIGEST_LENGTH);
 
-	if (llist_add_node(new_blockchain->chain, new_block, ADD_NODE_FRONT) != 0)
-	{
-		free(new_block);
-		free(new_blockchain->chain);
-		free(new_blockchain);
-		return (NULL);
-	}
+	llist_add_node(new_blockchain->chain, new_block, ADD_NODE_FRONT);
 
 	return (new_blockchain);
 }
