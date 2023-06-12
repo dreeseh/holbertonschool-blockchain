@@ -11,6 +11,7 @@
 #include <llist.h>
 
 #include <openssl/sha.h>
+#include "../../crypto/hblk_crypto.h"
 
 /* macros */
 #define	BLOCKCHAIN_DATA_MAX	1024
