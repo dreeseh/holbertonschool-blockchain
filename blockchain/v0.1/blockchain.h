@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdint.h>
+#include <time.h>
 
 #include <llist.h>
 
@@ -85,13 +86,6 @@ typedef struct block_s
     block_data_t    data; /* This must stay second */
     uint8_t     hash[SHA256_DIGEST_LENGTH];
 } block_t;
-
-/**
- * struct block_data_s - Block data
- *
- * @buffer: Data buffer
- * @len:    Data size (in bytes)
- */
 
 /* prototypes */
 blockchain_t *blockchain_create(void);
