@@ -22,7 +22,7 @@ block_t *block_create(block_t const *prev, int8_t
 
 	new_block->info.index = prev->info.index + 1;
 	new_block->info.timestamp = time(NULL);
-	memcpy(new_block->info.prev_hash, prev->hash, SHA224_DIGEST_LENGTH);
+	memcpy(new_block->info.prev_hash, prev->hash, sizeof(prev->hash));
 	memset(new_block->hash, 0, SHA256_DIGEST_LENGTH);
 
 	memcpy(new_block->data.buffer, data, data_len);
