@@ -36,6 +36,13 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path)
 	return (0);
 }
 
+/**
+ * initialize_blk_header - initializes the header for the blocks
+ *
+ * @hblk_header: pointer to the block_header_t struct
+ *
+ * Return: is void
+ */
 void initialize_blk_header(block_header_t *hblk_header)
 {
 	hblk_header->hblk_magic[0] = 'H';
