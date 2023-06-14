@@ -45,13 +45,8 @@ int blockchain_serialize(blockchain_t const *blockchain, char const *path)
  */
 void initialize_blk_header(block_header_t *hblk_header)
 {
-	hblk_header->hblk_magic[0] = 'H';
-	hblk_header->hblk_magic[1] = 'B';
-	hblk_header->hblk_magic[2] = 'L';
-	hblk_header->hblk_magic[3] = 'K';
-	hblk_header->hblk_version[0] = '0';
-	hblk_header->hblk_version[1] = '.';
-	hblk_header->hblk_version[2] = '1';
+	memcpy(hblk_header->hblk_magic, "HBLK", 4);
+	memcpy(hblk_header->hblk_version, "0.1", 3);
 	hblk_header->hblk_endian = 1;
 	hblk_header->hblk_blocks = 0;
 }
