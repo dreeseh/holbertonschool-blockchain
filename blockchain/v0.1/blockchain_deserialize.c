@@ -1,5 +1,12 @@
 #include "blockchain.h"
 
+/**
+ * blockchain_deserialize - deserializes a Blockchain from a file
+ *
+ * @path: contains the path to a file to load the Blockchain from
+ *
+ * Return: pointer to the deserialized Blockchain or NULL upon failure
+ */
 blockchain_t *blockchain_deserialize(char const *path)
 {
 	FILE *fd;
@@ -11,26 +18,21 @@ blockchain_t *blockchain_deserialize(char const *path)
 	fd = fopen(path, "r");
 	if (!fd)
 		return (NULL);
-
 	fread(&hblk_header, sizeof(hblk_header), 1, fd);
 	if (!header_checker(&hblk_header))
 		return (NULL);
-
 	if (hblk_header.hblk_endian == 2)
-		_swap_endian(&hblk_header.hblk_blocks,
-		sizeof(hblk_header.hblk_blocks));
+		_swap_endian(&hblk_header.hblk_blocks, sizeof(hblk_header.hblk_blocks));
 
 	if (hblk_header.hblk_blocks == 0)
 	{
 		fclose(fd);
 		return (NULL);
 	}
-
 	hblk_blockchain = malloc(sizeof(blockchain_t));
 	if (!hblk_blockchain)
 		return (NULL);
 	hblk_blockchain->chain = llist_create(MT_SUPPORT_FALSE);
-
 	for (i = 0 ; i < hblk_header.hblk_blocks ; i++)
 	{
 		hblk_block = malloc(sizeof(block_t));
@@ -43,13 +45,19 @@ blockchain_t *blockchain_deserialize(char const *path)
 		memset(hblk_block->data.buffer,  0, sizeof(hblk_block->data.buffer));
 		fread(&hblk_block->data.buffer, hblk_block->data.len, 1, fd);
 		fread(&hblk_block->hash, 32, 1, fd);
-
 		llist_add_node(hblk_blockchain->chain, hblk_block, ADD_NODE_REAR);
 	}
 	fclose(fd);
 	return (hblk_blockchain);
 }
 
+/**
+ * header_checker - checks the header for the magic # & version
+ *
+ * @hblk_header: the header to validate
+ *
+ * Return: 1 upon success, 0 upon failure
+ */
 int header_checker(block_header_t *hblk_header)
 {
 	if (memcmp(hblk_header->hblk_magic, "HBLK", 4) != 0 ||
@@ -59,6 +67,13 @@ int header_checker(block_header_t *hblk_header)
 	return (1);
 }
 
+/**
+ * block_swap - uses _swap_block to change endianess
+ *
+ * @hblk_block: struct from which pramaters to switch come from
+ *
+ * Return: is void
+ */
 void block_swap(block_t *hblk_block)
 {
 	_swap_endian(&hblk_block->info.index, 4);
