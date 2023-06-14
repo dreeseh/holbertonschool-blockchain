@@ -5,7 +5,7 @@ blockchain_t *blockchain_deserialize(char const *path)
 	FILE *fd;
 	uint32_t i;
 	block_t *hblk_block;
-	block_header_t *hblk_header;
+	block_header_t hblk_header;
 	blockchain_t *hblk_blockchain;
 
 	fd = fopen(path, "r");
@@ -13,14 +13,14 @@ blockchain_t *blockchain_deserialize(char const *path)
 		return (NULL);
 
 	fread(&hblk_header, sizeof(hblk_header), 1, fd);
-	if (!header_checker(hblk_header))
+	if (!header_checker(&hblk_header))
 		return (NULL);
 
-	if (hblk_header->hblk_endian == 2)
-		_swap_endian(&hblk_header->hblk_blocks,
-		sizeof(hblk_header->hblk_blocks));
+	if (hblk_header.hblk_endian == 2)
+		_swap_endian(&hblk_header.hblk_blocks,
+		sizeof(hblk_header.hblk_blocks));
 
-	if (hblk_header->hblk_blocks == 0)
+	if (hblk_header.hblk_blocks == 0)
 	{
 		fclose(fd);
 		return (NULL);
@@ -31,14 +31,14 @@ blockchain_t *blockchain_deserialize(char const *path)
 		return (NULL);
 	hblk_blockchain->chain = llist_create(MT_SUPPORT_FALSE);
 
-	for (i = 0 ; i < hblk_header->hblk_blocks ; i++)
+	for (i = 0 ; i < hblk_header.hblk_blocks ; i++)
 	{
 		hblk_block = malloc(sizeof(block_t));
 		if (!hblk_block)
 			return (NULL);
 		fread(hblk_block, 56, 1, fd);
 		fread(&hblk_block->data.len, 4, 1, fd);
-		if (hblk_header->hblk_endian == 2)
+		if (hblk_header.hblk_endian == 2)
 			block_swap(hblk_block);
 		memset(hblk_block->data.buffer,  0, sizeof(hblk_block->data.buffer));
 		fread(&hblk_block->data.buffer, hblk_block->data.len, 1, fd);
