@@ -118,6 +118,8 @@ uint8_t *block_hash(block_t const *block, uint8_t hash_buf[SHA256_DIGEST_LENGTH]
 int blockchain_serialize(blockchain_t const *blockchain, char const *path);
 void initialize_blk_header(block_header_t *hblk_header);
 blockchain_t *blockchain_deserialize(char const *path);
+int header_checker(block_header_t *hblk_header);
+void block_swap(block_t *hblk_block);
 int block_is_valid(block_t const *block, block_t const *prev_block);
 
 #endif /* BLOCKCHAIN_H */
