@@ -11,29 +11,30 @@
 int hash_matches_difficulty(uint8_t const hash[SHA256_DIGEST_LENGTH],
 			    uint32_t difficulty)
 {
-	uint32_t i, j, counter;
+	uint32_t leading_zeros, i, remaining_bits, mask;
 
 	if (!hash)
-		return (!EXIT_FAILURE);
+		return (0);
 
 	if (difficulty > SHA256_DIGEST_LENGTH * 8)
-		return (!EXIT_FAILURE);
+		return (0);
 
-	for (i = 0 ; i < SHA256_DIGEST_LENGTH ; i++)
+	/* calculate the number of required leading zeros */
+	leading_zeros = difficulty / 8;
+
+	/* check the bytes of the hash for the required leading zeros */
+	for (i = 0; i < leading_zeros; i++)
 	{
-		for (j = 128 ; j > 0 ; j = j >> 1)
-		{
-			if (j & hash[i])
-				break;
-			counter++;
-		}
-		
-		if (j & hash[i])
-			break;
+		if (hash[i] != 0)
+			return (0);
 	}
 
-	if (counter >= difficulty)
-		return (!EXIT_SUCCESS);
-	
-	return (!EXIT_FAILURE);
+	/* Check the remaining bits of the difficulty */
+	remaining_bits = difficulty % 8;
+	mask = 255 << (8 - remaining_bits);
+
+	if (hash[leading_zeros] & mask)
+		return (0);
+
+	return (1);
 }
