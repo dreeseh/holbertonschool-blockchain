@@ -24,16 +24,16 @@ void block_mine(block_t *block)
 	 */
 	while (1)
 	{
-		/* start the nonce at zero */
+		/* start the block's nonce at zero & update as we go */
 		block->info.nonce = nonce;
 
-		/* recalculating the block's hash */
+		/* recalculating the block's hash value */
 		block_hash(block, hash);
 
 		/* look for the matching difficulty */
 		if (hash_matches_difficulty(hash, block->info.difficulty))
 		{
-			/* copy the hash into the block's array */
+			/* copy the hash into the block's hash array */
 			memcpy(block->hash, hash, SHA256_DIGEST_LENGTH);
 			break;
 		}
