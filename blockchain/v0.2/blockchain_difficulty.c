@@ -12,7 +12,7 @@
 uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 {
 	block_t *current_block, *prev_and_adjusted;
-	uint64_t expected_time, needed_time;
+	uint64_t expected_time, actual_time;
 	uint32_t difficulty;
 
 	if (!blockchain || !blockchain->chain)
@@ -30,20 +30,20 @@ uint32_t blockchain_difficulty(blockchain_t const *blockchain)
 
 	/* Retrieve the last Block for which an adjustment was made */
 	prev_and_adjusted = llist_get_node_at(blockchain->chain,
-					      current_block->info.index - DIFFICULTY_ADJUSTMENT_INTERVAL);
+					      current_block->info.index - DIFFICULTY_ADJUSTMENT_INTERVAL + 1);
 
 	/* Compute the expected elapsed time between the two Blocks */
 	expected_time = BLOCK_GENERATION_INTERVAL * DIFFICULTY_ADJUSTMENT_INTERVAL;
 	/* compute the actual elapsed time*/
-	needed_time = current_block->info.timestamp -
+	actual_time = current_block->info.timestamp -
 		      prev_and_adjusted->info.timestamp;
 	/* if our time is less than half the expected time */
 	/* the difficulty is incremented by 1 */
-	if (needed_time < expected_time / 2)
+	if (actual_time < expected_time / 2)
 		difficulty = current_block->info.difficulty + 1;
 	/* if our time is more than twice the expected time */
 	/* the difficulty is decremented by 1 */
-	else if (needed_time > expected_time * 2)
+	else if (actual_time > expected_time * 2)
 		difficulty = current_block->info.difficulty - 1;
 	/* otherwise, our difficulty will stay the same */
 	else
