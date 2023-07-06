@@ -11,10 +11,11 @@
 uint8_t *transaction_hash(transaction_t const *transaction,
 			  uint8_t hash_buf[SHA256_DIGEST_LENGTH])
 {
-	SHA256_CTX my_sha256_ctx;
-	uint8_t buffer[SHA256_DIGEST_LENGTH];
-	size_t i;
-	size_t length;
+	SHA256_CTX	my_sha256_ctx;
+	uint8_t		buffer[SHA256_DIGEST_LENGTH];
+	size_t		i, input_len, output_len;
+	tx_in_t		*input;
+	tx_out_t	*output;
 
 	if (transaction == NULL || hash_buf == NULL)
 		return (NULL);
@@ -24,14 +25,20 @@ uint8_t *transaction_hash(transaction_t const *transaction,
 		return (NULL);
 
 	/* Hash inputs */
-	length = llist_size(transaction->inputs);
-	for (i = 0; i < length; ++i)
+	input_len = llist_size(transaction->inputs);
+	for (i = 0; i < input_len; ++i)
 	{
-		tx_in_t *input = llist_get_node_at(transaction->inputs, i);
-
+		input = llist_get_node_at(transaction->inputs, i);
 		if (input == NULL)
-		return (NULL);
+			return (NULL);
 
+	/**
+	 * The transaction ID must be a hash of a buffer
+	 * containing the following information:
+	 * Each input’s block_hash (32 bytes),
+	 * tx_id (32 bytes) and
+	 * tx_out_hash (32 bytes),
+	 */
 	/* Hash block_hash */
 	if (!SHA256_Update(&my_sha256_ctx,
 			   input->block_hash,
@@ -51,12 +58,11 @@ uint8_t *transaction_hash(transaction_t const *transaction,
 		return (NULL);
 	}
 
-	/* Hash outputs */
-	length = llist_size(transaction->outputs);
-	for (i = 0; i < length; ++i)
+	/* Each output’s hash (32 bytes) */
+	output_len = llist_size(transaction->outputs);
+	for (i = 0; i < output_len; ++i)
 	{
-		tx_out_t *output = llist_get_node_at(transaction->outputs, i);
-
+		output = llist_get_node_at(transaction->outputs, i);
 		if (output == NULL)
 			return (NULL);
 
