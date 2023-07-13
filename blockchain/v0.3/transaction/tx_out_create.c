@@ -11,15 +11,15 @@
  */
 tx_out_t *tx_out_create(uint32_t amount, uint8_t const pub[EC_PUB_LEN])
 {
-	tx_out_t *output;
+	tx_out_t *tx_output;
 
-	output = malloc(sizeof(tx_out_t));
-	if (!output)
+	tx_output = malloc(sizeof(tx_out_t));
+	if (!tx_output)
 		return (NULL);
 
-	output->amount = amount;
-	memcpy(output->pub, pub, EC_PUB_LEN);
-	sha256((int8_t const *)output, EC_PUB_LEN + 4, output->hash);
+	tx_output->amount = amount;
+	memcpy(tx_output->pub, pub, EC_PUB_LEN);
+	sha256((int8_t const *)tx_output, EC_PUB_LEN + 4, tx_output->hash);
 
-	return (output);
+	return (tx_output);
 }
