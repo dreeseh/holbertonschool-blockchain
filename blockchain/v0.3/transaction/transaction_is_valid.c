@@ -2,8 +2,8 @@
 
 /**
 * match_inputs - checks if unspent token == input token
-* @u_token: unspent out transaction
-* @i_token: transaction input
+* @u_tx_out: unspent out transaction
+* @tx_in: transaction input
 *
 * Return: 1 on match, else 0
 */
@@ -15,19 +15,20 @@ int match_inputs(unspent_tx_out_t *u_tx_out, tx_in_t *tx_in)
 		return (0);
 	if (memcmp(u_tx_out->block_hash, tx_in->block_hash, 32))
 		return (0);
-	
+
 	return (1);
 }
 
 /**
  * transaction_is_valid - checks whether a transaction is valid
- * 
+ *
  * @transaction: points to the transaction to verify
  * @all_unspent: is the list of all unspent transaction outputs to date
  *
  * Return: return 1 if the transaction is valid, and 0 otherwise
  */
-int transaction_is_valid(transaction_t const *transaction, llist_t *all_unspent)
+int transaction_is_valid(transaction_t const *transaction,
+			 llist_t *all_unspent)
 {
 	tx_in_t *tx_in;
 	unspent_tx_out_t *unspent_tx_out;
