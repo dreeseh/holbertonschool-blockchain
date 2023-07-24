@@ -57,7 +57,7 @@ uint32_t sel_tx_inputs(llist_t *inputs,
 	for (i = 0 ; i < llist_size(all_unspent) ; i++)
 	{
 		unspent_out = llist_get_node_at(all_unspent, i);
-		if (memcmp(unspent_out->out.pub, sender_pub_key, EC_PUB_LEN))
+		if (memcmp(unspent_out->out.pub, sender_pub_key, EC_PUB_LEN) == 0)
 		{
 			input_transaction = tx_in_create(unspent_out);
 			llist_add_node(inputs, input_transaction, ADD_NODE_REAR);
